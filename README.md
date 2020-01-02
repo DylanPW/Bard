@@ -14,6 +14,8 @@ Many features are as of yet unimplemented and untested. What does work is;
 Currently requires Python 3.6 due to fbs limitations.
 Uses PyQt5 version 5.9.2
 
+Run `pip install -r requirements.txt` to install the requisite version of PyQt5
+
 ## Changelog:
 ### v0.1-pre
 
