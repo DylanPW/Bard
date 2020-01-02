@@ -11,7 +11,7 @@ class Window(QMainWindow):
         '''Initializer'''
         super().__init__(parent)
         # Setting icon
-        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setWindowTitle('Bard')
         self.setGeometry(200, 200, 500, 500)
         self.generalLayout = QVBoxLayout()
