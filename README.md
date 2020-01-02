@@ -8,4 +8,5 @@ Currently in development.
 ## Changelog:
 
 
+## Credits: 
 Logo used: Bard by John Bartolome from the Noun Project

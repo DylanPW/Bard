@@ -88,16 +88,46 @@ def create_folders(playlist, destpath):
         return False
 
 def get_relative_folder(file, playlistloc):
+    """ gets the file folder relative to the playlist location
+
+    Args:
+        file (string): path to the file
+        playlistloc (string): path to the playlist file
+    
+    Returns:
+        string: the relative path between the two locations
+    """
     return get_folder(file).relative_to(playlistloc)
 
 def get_relpath(path):
+    """ gets the relative path without file
+
+    Args:
+        path (string): path to the file
+            
+    Returns:
+        string: the relative path
+    """
     return ntpath.split(path)[0]
 
 def copy_playlist_file(playlist, destpath):
+    """ Copies the playlist file to the chosen directory
+
+    Args:
+        playlist (string): Path to the playlist file
+        destpath (string): Path to the destination folder
+    """
     Path(destpath).mkdir(parents=True, exist_ok=True)
     shutil.copy2(playlist, destpath)
 
 def copy_file(file, destpath, playlistfile):
+    """ Copies the file to the destination folder
+
+    Args:
+        file (string): the path to the file to be copied
+        destpath (string): Path to the destination folder
+        playlistfile (string): Path to the playlist file
+    """
     playlistloc = PurePath(get_folder(playlistfile))
     loc = get_folder(file).relative_to(playlistloc)
     shutil.copy2(file, destpath / loc)
