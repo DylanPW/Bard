@@ -9,6 +9,7 @@ Many features are as of yet unimplemented and untested. What does work is;
 - Copying the playlist file and the relevant tracks to the specified directory. The folder structure specified in the original *.m3u file is maintained.
 - Preview of the contents of the playlist on having a valid path entered.
 - Status and Progressbars work
+- Copying of relative playlists to chosen directory works (at least with *.flac(s))
 
 ## Requirements:
 Currently requires Python 3.6 due to fbs limitations.
@@ -29,4 +30,4 @@ Very basic iteration of Bard, many features are as of yet unimplemented and unte
 Execute `Bard.exe` to run
 
 ## Credits: 
-Logo used: Bard by John Bartolome from the Noun Project
+Icon made by [smalllikeart](https://www.flaticon.com/authors/smalllikeart)from [www.flaticon.com](https://www.flaticon.com/)
