@@ -81,7 +81,6 @@ def create_folders(playlist, destpath):
                 folders.append(temp)
         for folder in folders:
             if not (Path.exists(Path(folder))):
-                print("Folder does not exist, creating!")
                 folder.mkdir(parents=True, exist_ok=True)
         return True
     except:

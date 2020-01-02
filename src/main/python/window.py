@@ -22,9 +22,9 @@ class Window(QMainWindow):
         self._createWidgets()
         
     def _createStatusBar(self):
-        status = QStatusBar()
-        status.showMessage("Bard Playlist Copier v0.1")
-        self.setStatusBar(status)
+        self.status = QStatusBar()
+        self.status.showMessage("Bard Playlist Copier v0.1")
+        self.setStatusBar(self.status)
 
     def _createGroupBox(self):
         ''' create the groupbox '''
@@ -61,60 +61,81 @@ class Window(QMainWindow):
 
         self.progressBar = QProgressBar()
         self.progressBar.setRange(0, 10000)
-        self.progressBar.setValue(3702)
+        self.progressBar.setValue(0)
 
         layout.addWidget(self.progressBar, 14, 0, 1, 14)
         # Add to general layout
         self.generalLayout.addLayout(layout)
 
     def setSourceText(self, text):
+        ''' set the source file text contents '''
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        # options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self, "Select Playlist", "", "Playlist Files (*.m3u)", options=options)
         if fileName:
             self.sourcefile.setText(fileName)
 
     def getSourceText(self):
+        ''' return the content of the sourcefile contents '''
         return self.sourcefile.text()
 
     def setDestinationText(self):
+        ''' set the destination folder text''' 
         folder = QFileDialog.getExistingDirectory(self, "Select Destination")
         if folder:
             self.destinationpath.setText(folder)
 
     def getDestinationText(self):
+        ''' return the content of the destination path lineedit '''
         return self.destinationpath.text()
 
     def sourceTextChanged(self):   
+        ''' attempt to preview the playlist file contents on source
+            text being changed '''
         temp = self.getSourceText()     
         if (p.valid_m3u_playlist(temp)):
             playlist = p.load_m3u_playlist(temp)
             self.populatePreview(playlist)
 
     def populatePreview(self, playlist):
+        ''' populate the preview contents with the given list of files '''
         self.previewlist.clear()
         for item in playlist:
             QListWidgetItem(item, self.previewlist)
 
     def updateProgressBar(self, currentval, maxval):
-        pass
+        self.progressBar.setMaximum(maxval)
+        self.progressBar.setValue(currentval)
 
     def setStatusText(self, text):
-        pass
+        self.status.showMessage(text)
         
     def copy(self):
+        ''' copy files to the destination directory '''
         # Get the source and destination paths
         playlistpath = self.getSourceText()
         destinationpath = self.getDestinationText()
         relativepath = p.get_relpath(playlistpath)
         playlist = p.load_m3u_playlist(playlistpath)
+        
+        self.setStatusText("Loading playlist " + p.output_filename(playlistpath) + "...")
         # Verify that the files do exist, and rebuild playlist.
         fullpath, playlist = p.verify_files(playlist, relativepath)
+        self.setStatusText("Verifying playlist...")
         p.create_folders(playlist, destinationpath)
+        self.setStatusText("Creating folders...")
         p.copy_playlist_file(playlistpath, destinationpath)
+        self.setStatusText("Copying playlist file...")
 
+        maxval = len(fullpath)
+        counter = 1
         for file in fullpath:
+            self.updateProgressBar(counter, maxval)
+            self.setStatusText("Copying file " + p.output_filename(file) + "...")
             p.copy_file(file, destinationpath, playlistpath)
+            counter += 1
+        
+        self.setStatusText("Done!")
 
 
 
