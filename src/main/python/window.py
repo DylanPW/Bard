@@ -2,6 +2,7 @@ from PyQt5 import  QtGui
 from PyQt5.QtWidgets import *
 import sys
 import playlistParser as p
+import pathExist as pe
 from pathlib import Path
 
 class Window(QMainWindow):
@@ -92,50 +93,60 @@ class Window(QMainWindow):
     def sourceTextChanged(self):   
         ''' attempt to preview the playlist file contents on source
             text being changed '''
-        temp = self.getSourceText()     
+        temp = self.getSourceText()
+        self.previewlist.clear()     
         if (p.valid_m3u_playlist(temp)):
             playlist = p.load_m3u_playlist(temp)
             self.populatePreview(playlist)
 
     def populatePreview(self, playlist):
         ''' populate the preview contents with the given list of files '''
-        self.previewlist.clear()
         for item in playlist:
             QListWidgetItem(item, self.previewlist)
 
     def updateProgressBar(self, currentval, maxval):
+        ''' update the progress bar value '''
         self.progressBar.setMaximum(maxval)
         self.progressBar.setValue(currentval)
 
     def setStatusText(self, text):
+        ''' set the statusbar message '''
         self.status.showMessage(text)
+
+    def validateInputs(self):
+        ''' validate that the playlist is a valid file and that the directory is a valid path '''
+        if (p.valid_m3u_playlist(self.getSourceText()) and pe.does_path_exist_or_creatable(self.getDestinationText())):
+            return True
+        return False
         
     def copy(self):
-        ''' copy files to the destination directory '''
-        # Get the source and destination paths
-        playlistpath = self.getSourceText()
-        destinationpath = self.getDestinationText()
-        relativepath = p.get_relpath(playlistpath)
-        playlist = p.load_m3u_playlist(playlistpath)
-        
-        self.setStatusText("Loading playlist " + p.output_filename(playlistpath) + "...")
-        # Verify that the files do exist, and rebuild playlist.
-        fullpath, playlist = p.verify_files(playlist, relativepath)
-        self.setStatusText("Verifying playlist...")
-        p.create_folders(playlist, destinationpath)
-        self.setStatusText("Creating folders...")
-        p.copy_playlist_file(playlistpath, destinationpath)
-        self.setStatusText("Copying playlist file...")
+        if (self.validateInputs() == True):
+            ''' copy files to the destination directory '''
+            # Get the source and destination paths
+            playlistpath = self.getSourceText()
+            destinationpath = self.getDestinationText()
+            relativepath = p.get_relpath(playlistpath)
+            playlist = p.load_m3u_playlist(playlistpath)
+            
+            self.setStatusText("Loading playlist " + p.output_filename(playlistpath) + "...")
+            # Verify that the files do exist, and rebuild playlist.
+            fullpath, playlist = p.verify_files(playlist, relativepath)
+            self.setStatusText("Verifying playlist...")
+            p.create_folders(playlist, destinationpath)
+            self.setStatusText("Creating folders...")
+            p.copy_playlist_file(playlistpath, destinationpath)
+            self.setStatusText("Copying playlist file...")
 
-        maxval = len(fullpath)
-        counter = 1
-        for file in fullpath:
-            self.updateProgressBar(counter, maxval)
-            self.setStatusText("Copying file " + p.output_filename(file) + "...")
-            p.copy_file(file, destinationpath, playlistpath)
-            counter += 1
-        
-        self.setStatusText("Done!")
-
+            maxval = len(fullpath)
+            counter = 1
+            for file in fullpath:
+                self.updateProgressBar(counter, maxval)
+                self.setStatusText("Copying file " + p.output_filename(file) + "...")
+                p.copy_file(file, destinationpath, playlistpath)
+                counter += 1
+            
+            self.setStatusText("Done!")
+        else: 
+            pass
 
 
