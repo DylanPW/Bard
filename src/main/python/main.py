@@ -3,11 +3,12 @@ import sys
 import playlistParser as p
 import bardcontroller
 import window
+from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 if __name__ == '__main__':
-    app = QApplication([])
-    app.setStyle('Fusion')
+    appctxt = ApplicationContext()
+    appctxt.app.setStyle('Fusion')
     win = window.Window()    
     win.show()
     bardcontroller.BardController(view=win)    
-    sys.exit(app.exec_())
+    sys.exit(appctxt.app.exec_())
