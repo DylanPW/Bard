@@ -4,6 +4,20 @@ from pathlib import Path, PureWindowsPath, PurePath
 import re
 import shutil
 
+def valid_m3u_playlist(filepath):
+    """ validates if the playlist is an acceptable *.m3u playlist file
+
+    Args:
+        filepath (Path): The path to the playlist file
+
+    Returns:
+        bool : True if the file is valid, False otherwise  
+
+    """
+    if (Path(filepath).exists() and filepath.lower().endswith('.m3u')):
+        return True
+    return False
+
 def load_m3u_playlist(filepath):
     """ loads a *.m3u playlist file
 
@@ -13,7 +27,6 @@ def load_m3u_playlist(filepath):
     Returns:
         playlist (string list): the list of paths to the audio files    
     """
-
     with open(filepath, "r") as file:
         playlist = []
         for line in file:
@@ -50,40 +63,44 @@ def get_folder(sourcepath):
     Returns:
         string: the folder containing the file
     """
-    return sourcepath.parents[0]
+    return Path(sourcepath).parents[0]
 
-
-
-def copy_file(sourcefile, playlist, destpath, playlistfile):
-    """ verifies if the original files exist
+def create_folders(playlist, destpath):
+    """ creates the file structure required
 
     Args:
         sourcefile (Path list): List of the processed files in 
         destpath (string):
 
     """
-    folders = []
+    try:
+        folders = []
+        for file in playlist:
+            temp = destpath / get_folder(file)
+            if (temp not in folders):
+                folders.append(temp)
+        for folder in folders:
+            if not (Path.exists(Path(folder))):
+                print("Folder does not exist, creating!")
+                folder.mkdir(parents=True, exist_ok=True)
+        return True
+    except:
+        return False
+
+def get_relative_folder(file, playlistloc):
+    return get_folder(file).relative_to(playlistloc)
+
+def get_relpath(path):
+    return ntpath.split(path)[0]
+
+def copy_playlist_file(playlist, destpath):
+    Path(destpath).mkdir(parents=True, exist_ok=True)
+    shutil.copy2(playlist, destpath)
+
+def copy_file(file, destpath, playlistfile):
     playlistloc = PurePath(get_folder(playlistfile))
-
-    for file in playlist:
-        temp = destpath / get_folder(file)
-        if (temp not in folders):
-            folders.append(temp)
-    for folder in folders:
-        if not (Path.exists(Path(folder))):
-            print("Folder does not exist, creating!")
-            folder.mkdir(parents=True, exist_ok=True)
-    
-    print("Copying playlist file ...")
-    shutil.copy2(playlistfile, destpath)
-
-    for file in sourcefile:
-        print("Copying " + output_filename(file) + "...")
-        loc = get_folder(file).relative_to(playlistloc)
-        print(loc)
-        shutil.copy2(file, destpath / loc)
-    
-    print("Done!")
+    loc = get_folder(file).relative_to(playlistloc)
+    shutil.copy2(file, destpath / loc)
 
 def output_filename(filepath):
     """ outputs the file names from a path
