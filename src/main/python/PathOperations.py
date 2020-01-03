@@ -92,8 +92,6 @@ def does_path_exist_or_creatable(pathname: str) -> bool:
     '''
     `True` if the passed pathname is a valid pathname for the current OS _and_
     either currently exists or is hypothetically creatable; `False` otherwise.
-
-    This function is guaranteed to _never_ raise exceptions.
     '''
     try:
         # To prevent "os" module calls from raising undesirable exceptions on
@@ -103,3 +101,9 @@ def does_path_exist_or_creatable(pathname: str) -> bool:
     # Report failure on non-fatal filesystem complaints
     except OSError:
         return False
+
+def is_path_absolute(pathname: str) -> bool:
+    '''
+    `True` if the path is absolute; `False` if it is relative
+    '''
+    return os.path.isabs(pathname)

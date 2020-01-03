@@ -1,6 +1,7 @@
 import os
 import ntpath
 from pathlib import Path, PureWindowsPath, PurePath
+from PathOperations import is_path_absolute
 import re
 import shutil
 
@@ -43,12 +44,17 @@ def verify_files(playlist, playlistpath):
     Returns:
         playlist (string list): the list of file paths that exist
     """
+    absolute = False
     returnlist = []
     returnplaylist = []
     playlistpath = Path(playlistpath)
     for i in playlist:
         win_path = PureWindowsPath(i)
-        f = playlistpath / win_path
+        absolute = is_path_absolute(win_path)
+        if (absolute):
+            f = Path(win_path)
+        else:
+            f = Path(playlistpath / win_path)
         if(f.exists()):
             returnlist.append(f)
             returnplaylist.append(Path(win_path))
@@ -129,6 +135,7 @@ def copy_file(file, destpath, playlistfile):
     """
     playlistloc = PurePath(get_folder(playlistfile))
     loc = get_folder(file).relative_to(playlistloc)
+    
     shutil.copy2(file, destpath / loc)
 
 def output_filename(filepath):

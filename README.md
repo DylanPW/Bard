@@ -12,7 +12,7 @@ Many features are as of yet unimplemented and untested. What does work is;
 - Copying of relative playlists to chosen directory works (at least with *.flac(s))
 
 ## Requirements:
-Currently requires Python 3.6 due to fbs limitations.
+Requires Python 3.6 due to fbs limitations.
 Uses PyQt5 version 5.9.2
 
 Run `pip install -r requirements.txt` to install the requisite version of PyQt5
@@ -30,4 +30,4 @@ Very basic iteration of Bard, many features are as of yet unimplemented and unte
 Execute `Bard.exe` to run
 
 ## Credits: 
-Icon made by [smalllikeart](https://www.flaticon.com/authors/smalllikeart)from [www.flaticon.com](https://www.flaticon.com/)
+Icon made by [smalllikeart](https://www.flaticon.com/authors/smalllikeart) from [www.flaticon.com](https://www.flaticon.com/)

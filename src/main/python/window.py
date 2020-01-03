@@ -2,7 +2,7 @@ from PyQt5 import  QtGui
 from PyQt5.QtWidgets import *
 import sys
 import playlistParser as p
-import pathExist as pe
+import PathOperations as po
 from pathlib import Path
 
 class Window(QMainWindow):
@@ -24,7 +24,7 @@ class Window(QMainWindow):
         
     def _createStatusBar(self):
         self.status = QStatusBar()
-        self.status.showMessage("Bard Playlist Copier v0.1")
+        self.status.showMessage("Bard Playlist Copier v0.2-pre")
         self.setStatusBar(self.status)
 
     def _createGroupBox(self):
@@ -115,7 +115,7 @@ class Window(QMainWindow):
 
     def validateInputs(self):
         ''' validate that the playlist is a valid file and that the directory is a valid path '''
-        if (p.valid_m3u_playlist(self.getSourceText()) and pe.does_path_exist_or_creatable(self.getDestinationText())):
+        if (p.valid_m3u_playlist(self.getSourceText()) and po.does_path_exist_or_creatable(self.getDestinationText())):
             return True
         return False
         
@@ -130,13 +130,13 @@ class Window(QMainWindow):
             
             self.setStatusText("Loading playlist " + p.output_filename(playlistpath) + "...")
             # Verify that the files do exist, and rebuild playlist.
-            fullpath, playlist = p.verify_files(playlist, relativepath)
+            fullpath, playlist  = p.verify_files(playlist, relativepath)
             self.setStatusText("Verifying playlist...")
             p.create_folders(playlist, destinationpath)
             self.setStatusText("Creating folders...")
             p.copy_playlist_file(playlistpath, destinationpath)
             self.setStatusText("Copying playlist file...")
-
+            
             maxval = len(fullpath)
             counter = 1
             for file in fullpath:
