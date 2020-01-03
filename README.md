@@ -18,7 +18,11 @@ Uses PyQt5 version 5.9.2
 Run `pip install -r requirements.txt` to install the requisite version of PyQt5
 
 ## Changelog:
-### v0.1-pre
+
+### 0.2-pre
+- Added support for absolute paths and improved stability
+
+### 0.1-pre
 
 Very basic iteration of Bard, many features are as of yet unimplemented and untested. What does work is;
 
@@ -26,6 +30,7 @@ Very basic iteration of Bard, many features are as of yet unimplemented and unte
 - Copying the playlist file and the relevant tracks to the specified directory. The folder structure specified in the original *.m3u file is maintained.
 - Preview of the contents of the playlist on having a valid path entered.
 - Status and Progressbars work
+- Copying of relative playlists to chosen directory works (at least with *.flac(s))
 
 Execute `Bard.exe` to run
 
