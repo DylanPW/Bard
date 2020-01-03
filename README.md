@@ -1,4 +1,4 @@
-# Bard 
+# Bard [](https://image.flaticon.com/icons/svg/2033/2033191.svg "logo")
 ## Playlist Copy Assistant
 
 A very basic script for copying the files specified in an *.m3u playlist to a specified directory. Features a qt5 based GUI using the fman build system. (https://build-system.fman.io/)
@@ -9,7 +9,7 @@ Many features are as of yet unimplemented and untested. What does work is;
 - Copying the playlist file and the relevant tracks to the specified directory. The folder structure specified in the original *.m3u file is maintained.
 - Preview of the contents of the playlist on having a valid path entered.
 - Status and Progressbars work
-- Copying of relative playlists to chosen directory works (at least with *.flac(s))
+- Copying playlists with both absolute and relative paths to chosen directory works (at least with *.flac(s))
 
 ## Requirements:
 Requires Python 3.6 due to fbs limitations.
