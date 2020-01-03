@@ -2,6 +2,7 @@ import os
 import ntpath
 from pathlib import Path, PureWindowsPath, PurePath
 from PathOperations import is_path_absolute
+import audioFormats
 import re
 import shutil
 
@@ -55,7 +56,7 @@ def verify_files(playlist, playlistpath):
             f = Path(win_path)
         else:
             f = Path(playlistpath / win_path)
-        if(f.exists()):
+        if(f.exists() and f.suffix in audioFormats.formats):
             returnlist.append(f)
             returnplaylist.append(Path(win_path))
     return returnlist, returnplaylist
