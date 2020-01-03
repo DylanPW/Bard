@@ -1,4 +1,4 @@
-# Bard ![Bard](src\main\icons\32.png "logo")
+# Bard ![Bard](32.png "logo")
 ## Playlist Copy Assistant
 
 A very basic script for copying the files specified in an *.m3u playlist to a specified directory. Features a qt5 based GUI using the fman build system. (https://build-system.fman.io/)
