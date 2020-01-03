@@ -21,6 +21,7 @@ Run `pip install -r requirements.txt` to install the requisite version of PyQt5
 
 ### 0.2-pre
 - Added support for absolute paths and improved stability
+- Added proper icon
 
 ### 0.1-pre
 
