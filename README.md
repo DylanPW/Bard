@@ -10,6 +10,9 @@ Many features are as of yet unimplemented and untested. What does work is;
 - Preview of the contents of the playlist on having a valid path entered.
 - Status and Progressbars work
 - Copying playlists with both absolute and relative paths to chosen directory works (at least with *.flac(s))
+- Copying all selected tracks to a single playlist title folder.
+
+Execute `Bard.exe` to run
 
 ## Requirements:
 Requires Python 3.6 due to fbs limitations.
@@ -19,7 +22,12 @@ Run `pip install -r requirements.txt` to install the requisite version of PyQt5
 
 ## Changelog:
 
+### 0.3-pre
+- Fixed bug with absolute paths and changed backend to convert to relative playlists automatically.
+- Added merging all tracks to a single folder titled as the name of playlist (renaming playlist to come in future update)
+
 ### 0.2-pre
+
 - Added support for absolute paths and improved stability
 - Added proper icon
 
@@ -33,7 +41,9 @@ Very basic iteration of Bard, many features are as of yet unimplemented and unte
 - Status and Progressbars work
 - Copying of relative playlists to chosen directory works (at least with *.flac(s))
 
-Execute `Bard.exe` to run
+## Bugs:
+
+- Having a playlist consisting of either a mixture of absolute and relative paths or absolute paths targetting multiple disks will not copy successfully and will stop at the verifying playlist step.
 
 ## Credits: 
 Icon made by [smalllikeart](https://www.flaticon.com/authors/smalllikeart) from [www.flaticon.com](https://www.flaticon.com/)

@@ -1,8 +1,8 @@
 import os
 import ntpath
 from pathlib import Path, PureWindowsPath, PurePath
-from PathOperations import is_path_absolute
-import audioFormats
+from PathOperations import is_path_absolute, common_prefix
+import formats
 import re
 import shutil
 
@@ -36,17 +36,20 @@ def load_m3u_playlist(filepath):
                 playlist.append(line.rstrip())
     return playlist
 
-def verify_files(playlist, playlistpath):
+def verify_files(playlist, playlistpath, mergefolders, playlistname):
     """ verifies if the original files exist
 
     Args:
-        playlist (string list): the list of paths to the audio files    
+        playlist (string list): the list of paths to the audio files 
+        playlistpath (string): the path to the playlist file   
 
     Returns:
-        playlist (string list): the list of file paths that exist
+        returnlist (string list): the list of file paths that exist
+        returnplaylist (string list): output the relative path to create
     """
     absolute = False
     returnlist = []
+    tempplaylist = []
     returnplaylist = []
     playlistpath = Path(playlistpath)
     for i in playlist:
@@ -56,9 +59,18 @@ def verify_files(playlist, playlistpath):
             f = Path(win_path)
         else:
             f = Path(playlistpath / win_path)
-        if(f.exists() and f.suffix in audioFormats.formats):
+        if(f.exists() and f.suffix in formats.AudioFormats):
             returnlist.append(f)
-            returnplaylist.append(Path(win_path))
+            tempplaylist.append(i)    
+
+    if(mergefolders):  
+        for i in tempplaylist:
+            returnplaylist.append((Path(playlistname) / Path(i).name).as_posix())
+    else:
+        highestCommonParent = PureWindowsPath(common_prefix(tempplaylist,'\\'))
+        for i in tempplaylist:
+            returnplaylist.append(PureWindowsPath(i).relative_to(highestCommonParent.parent).as_posix())
+
     return returnlist, returnplaylist
 
 def get_folder(sourcepath):
@@ -73,10 +85,10 @@ def get_folder(sourcepath):
     return Path(sourcepath).parents[0]
 
 def create_folders(playlist, destpath):
-    """ creates the file structure required
+    """ creates the file structure required 
 
     Args:
-        sourcefile (Path list): List of the processed files in 
+        sourcefile (Path list): List of the processed files in '
         destpath (string):
 
     """
@@ -92,6 +104,13 @@ def create_folders(playlist, destpath):
         return True
     except:
         return False
+
+def create_playlist(name, location, contents):
+    path = Path('')
+    path = Path(location) / Path(name)
+    with open(path, "w") as f:
+        for line in contents:
+            f.write(line + "\n")
 
 def get_relative_folder(file, playlistloc):
     """ gets the file folder relative to the playlist location
@@ -126,7 +145,7 @@ def copy_playlist_file(playlist, destpath):
     Path(destpath).mkdir(parents=True, exist_ok=True)
     shutil.copy2(playlist, destpath)
 
-def copy_file(file, destpath, playlistfile):
+def copy_file(file, destpath, playlistfile, mergefolders):
     """ Copies the file to the destination folder
 
     Args:
@@ -134,10 +153,12 @@ def copy_file(file, destpath, playlistfile):
         destpath (string): Path to the destination folder
         playlistfile (string): Path to the playlist file
     """
-    playlistloc = PurePath(get_folder(playlistfile))
-    loc = get_folder(file).relative_to(playlistloc)
-    
-    shutil.copy2(file, destpath / loc)
+    if(mergefolders):
+        shutil.copy2(file, destpath)
+    else:
+        playlistloc = PurePath(get_folder(playlistfile))
+        loc = get_folder(file).relative_to(playlistloc)
+        shutil.copy2(file, destpath / loc)
 
 def output_filename(filepath):
     """ outputs the file names from a path

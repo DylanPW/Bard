@@ -1,4 +1,4 @@
-formats = [
+AudioFormats = [
     '.3gp',
     '.aa',
     '.aac',
@@ -42,3 +42,4 @@ formats = [
     '.webm',
     '.8svx' 
 ]
+

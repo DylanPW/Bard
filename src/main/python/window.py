@@ -21,11 +21,14 @@ class Window(QMainWindow):
         self._createGroupBox()
         self._createStatusBar() 
         self._createWidgets()
-        
-    def _createStatusBar(self):
+    
+    def _createStatusBar(self) -> str:
         self.status = QStatusBar()
-        self.status.showMessage("Bard Playlist Copier v0.2-pre")
+        self.status.showMessage("Bard Playlist Copier " + self.returnVersion())
         self.setStatusBar(self.status)
+    
+    def returnVersion(self):
+        return "v0.3-pre"
 
     def _createGroupBox(self):
         ''' create the groupbox '''
@@ -58,13 +61,18 @@ class Window(QMainWindow):
         layout.addWidget(QLabel('<h1>Bard Playlist Copier</h1>'), 0, 0, 1, 14)
         layout.addWidget(self.GroupBox, 1, 0, 13, 14)
         self.copybutton = QPushButton('Copy!')
-        layout.addWidget(self.copybutton, 15, 1, 1, 12)
+        layout.addWidget(self.copybutton, 16, 1, 1, 12)
 
+        # Adding progress bar
         self.progressBar = QProgressBar()
         self.progressBar.setRange(0, 10000)
         self.progressBar.setValue(0)
-
         layout.addWidget(self.progressBar, 14, 0, 1, 14)
+
+        # Add merge folders checkbox
+        self.mergeFoldersCheckbox = QCheckBox("Merge folders")
+        layout.addWidget(self.mergeFoldersCheckbox, 15, 5, 1, 4)
+
         # Add to general layout
         self.generalLayout.addLayout(layout)
 
@@ -118,35 +126,53 @@ class Window(QMainWindow):
         if (p.valid_m3u_playlist(self.getSourceText()) and po.does_path_exist_or_creatable(self.getDestinationText())):
             return True
         return False
+    
+    def getMergedFolders(self):
+        return self.mergeFoldersCheckbox.isChecked()
         
+
     def copy(self):
         if (self.validateInputs() == True):
             ''' copy files to the destination directory '''
-            # Get the source and destination paths
-            playlistpath = self.getSourceText()
-            destinationpath = self.getDestinationText()
-            relativepath = p.get_relpath(playlistpath)
-            playlist = p.load_m3u_playlist(playlistpath)
-            
-            self.setStatusText("Loading playlist " + p.output_filename(playlistpath) + "...")
-            # Verify that the files do exist, and rebuild playlist.
-            fullpath, playlist  = p.verify_files(playlist, relativepath)
-            self.setStatusText("Verifying playlist...")
-            p.create_folders(playlist, destinationpath)
-            self.setStatusText("Creating folders...")
-            p.copy_playlist_file(playlistpath, destinationpath)
-            self.setStatusText("Copying playlist file...")
-            
-            maxval = len(fullpath)
-            counter = 1
-            for file in fullpath:
-                self.updateProgressBar(counter, maxval)
-                self.setStatusText("Copying file " + p.output_filename(file) + "...")
-                p.copy_file(file, destinationpath, playlistpath)
-                counter += 1
-            
-            self.setStatusText("Done!")
-        else: 
-            pass
+            try:
+                self.copybutton.isEnabled = False
+                # Get if folders should be merged
+                mergefolders = self.getMergedFolders()
 
+                # Get the source and destination paths
+                playlistpath = self.getSourceText()
+                destinationpath = self.getDestinationText()
+                relativepath = p.get_relpath(playlistpath)                
+                playlistname = Path(playlistpath).stem
+                
+                self.setStatusText("Loading playlist " + p.output_filename(playlistpath) + "...")
+                playlist = p.load_m3u_playlist(playlistpath)
+                # Verify that the files do exist, and rebuild playlist.                
+                self.setStatusText("Verifying playlist...")
+                fullpath, playlist = p.verify_files(playlist, relativepath, mergefolders, playlistname)
+
+                # create new relative path playlist
+                self.setStatusText("Building Playlist...")
+                p.create_playlist(Path(playlistpath).name, destinationpath, playlist)
+
+                # Create folder structure
+                self.setStatusText("Creating folders...")
+                p.create_folders(playlist, destinationpath)
+                
+                # Copy tracks
+                maxval = len(fullpath)
+                counter = 1
+                for file in fullpath:                
+                    self.updateProgressBar(counter, maxval)
+                    self.setStatusText("Copying file " + p.output_filename(file) + "...")
+                    if(mergefolders):
+                        destpath = Path(destinationpath) / Path(playlistname)
+                    else:
+                        destpath = destinationpath
+                    p.copy_file(file, destpath, playlistpath, mergefolders)
+                    counter += 1
+                self.setStatusText("Done!")
+
+            finally:
+                self.copybutton.isEnabled = True
 

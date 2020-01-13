@@ -1,4 +1,6 @@
 import errno, os, sys
+from itertools import takewhile
+
 
 ''' 
 module derived from code from:
@@ -107,3 +109,10 @@ def is_path_absolute(pathname: str) -> bool:
     `True` if the path is absolute; `False` if it is relative
     '''
     return os.path.isabs(pathname)
+
+def all_names_equal(name):
+    return all(n==name[0] for n in name[1:])
+
+def common_prefix(paths, sep='/'):
+    bydirectorylevels = zip(*[p.split(sep) for p in paths])
+    return sep.join(x[0] for x in takewhile(all_names_equal, bydirectorylevels))
