@@ -25,6 +25,7 @@ Run `pip install -r requirements.txt` to install the requisite version of PyQt5
 ### 0.3-pre
 - Fixed bug with absolute paths and changed backend to convert to relative playlists automatically.
 - Added merging all tracks to a single folder titled as the name of playlist (renaming playlist to come in future update)
+- Added merging all tracks to a the same folder as the playlist
 
 ### 0.2-pre
 

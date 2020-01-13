@@ -13,11 +13,12 @@ class Window(QMainWindow):
         # Setting icon
         self.setWindowIcon(QtGui.QIcon('icon.ico'))
         self.setWindowTitle('Bard')
-        self.setGeometry(200, 200, 500, 500)
+        self.setGeometry(200, 200, 500, 800)
         self.generalLayout = QVBoxLayout()
         self._centralWidget = QWidget(self)
         self.setCentralWidget(self._centralWidget)      
         self._centralWidget.setLayout(self.generalLayout) 
+        self._createOptions()
         self._createGroupBox()
         self._createStatusBar() 
         self._createWidgets()
@@ -61,25 +62,48 @@ class Window(QMainWindow):
         layout.addWidget(QLabel('<h1>Bard Playlist Copier</h1>'), 0, 0, 1, 14)
         layout.addWidget(self.GroupBox, 1, 0, 13, 14)
         self.copybutton = QPushButton('Copy!')
-        layout.addWidget(self.copybutton, 16, 1, 1, 12)
-
+        layout.addWidget(self.copybutton, 17, 1, 1, 12)
         # Adding progress bar
         self.progressBar = QProgressBar()
         self.progressBar.setRange(0, 10000)
         self.progressBar.setValue(0)
-        layout.addWidget(self.progressBar, 14, 0, 1, 14)
-
-        # Add merge folders checkbox
-        self.mergeFoldersCheckbox = QCheckBox("Merge folders")
-        layout.addWidget(self.mergeFoldersCheckbox, 15, 5, 1, 4)
-
+        layout.addWidget(self.progressBar, 16, 0, 1, 14)
+        # Add options        
+        layout.addWidget(self.OptionBox, 14, 0, 2, 14)
         # Add to general layout
         self.generalLayout.addLayout(layout)
+
+    def _createOptions(self):
+        '''Create the options '''
+        # Main groupbox
+        self.OptionBox = QGroupBox("Options:")
+        optionlayout = QGridLayout()
+
+        # Folder options groupbox and buttongroup
+        self.folderGroupBox = QGroupBox("Folder Options:")
+        self.folderButtonGroup = QButtonGroup()
+        folderGridLayout = QGridLayout()
+        self.folderButtonGroup.exclusive = True
+
+        self.retainStructureCheckbox = QRadioButton("Retain Existing Folder Structure")
+        self.folderButtonGroup.addButton(self.retainStructureCheckbox)
+        self.retainStructureCheckbox.setChecked(True)
+        self.mergeFoldersCheckbox = QRadioButton("Merge folders")
+        self.folderButtonGroup.addButton(self.mergeFoldersCheckbox)
+        self.tracksToPlaylistFolderCheckbox = QRadioButton("Tracks to playlist folder")
+        self.folderButtonGroup.addButton(self.tracksToPlaylistFolderCheckbox)
+        
+        folderGridLayout.addWidget(self.retainStructureCheckbox, 0, 0, 1, 1)
+        folderGridLayout.addWidget(self.mergeFoldersCheckbox, 1, 0, 1, 1)
+        folderGridLayout.addWidget(self.tracksToPlaylistFolderCheckbox, 2, 0, 1 ,1)
+        self.folderGroupBox.setLayout(folderGridLayout)
+        optionlayout.addWidget(self.folderGroupBox, 0, 0, 1, 1)
+        # Add layout to main groupbox
+        self.OptionBox.setLayout(optionlayout)
 
     def setSourceText(self, text):
         ''' set the source file text contents '''
         options = QFileDialog.Options()
-        # options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self, "Select Playlist", "", "Playlist Files (*.m3u)", options=options)
         if fileName:
             self.sourcefile.setText(fileName)
@@ -175,4 +199,3 @@ class Window(QMainWindow):
 
             finally:
                 self.copybutton.isEnabled = True
-
